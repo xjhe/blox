@@ -19,6 +19,11 @@ import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.CreateEnvironmentRe
 import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.CreateEnvironmentResponse;
 import cucumber.steps.helpers.ExceptionContext;
 import java.util.function.Consumer;
+
+import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.DescribeEnvironmentRequest;
+import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.DescribeEnvironmentResponse;
+import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.UpdateEnvironmentRequest;
+import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.UpdateEnvironmentResponse;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -30,6 +35,14 @@ public class DataServiceWrapper extends MemoizedWrapper {
   public CreateEnvironmentResponse createEnvironment(
       CreateEnvironmentRequest createEnvironmentRequest) {
     return memoizeFunction(createEnvironmentRequest, dataService::createEnvironment);
+  }
+
+  public DescribeEnvironmentResponse describeEnvironment(DescribeEnvironmentRequest describeEnvironmentRequest) {
+    return memoizeInputAndCall(describeEnvironmentRequest, dataService::describeEnvironment);
+  }
+
+  public UpdateEnvironmentResponse updateEnvironment(UpdateEnvironmentRequest updateEnvironmentRequest) {
+    return memoizeInputAndCall(updateEnvironmentRequest, dataService::updateEnvironment);
   }
 
   public void tryCreateEnvironment(CreateEnvironmentRequest createEnvironmentRequest) {
