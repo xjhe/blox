@@ -25,9 +25,7 @@ import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.DescribeEnvironment
 import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.UpdateEnvironmentResponse;
 import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.DeleteEnvironmentResponse;
 
-
 import cucumber.steps.helpers.ExceptionContext;
-
 import java.util.function.Consumer;
 
 import lombok.RequiredArgsConstructor;
