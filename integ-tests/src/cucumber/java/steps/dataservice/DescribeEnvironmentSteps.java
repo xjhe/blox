@@ -18,7 +18,14 @@ import com.amazonaws.blox.dataservicemodel.v1.model.Environment;
 import com.amazonaws.blox.dataservicemodel.v1.model.EnvironmentId;
 import com.amazonaws.blox.dataservicemodel.v1.model.EnvironmentType;
 import com.amazonaws.blox.dataservicemodel.v1.model.InstanceGroup;
-import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.*;
+import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.CreateEnvironmentRequest;
+import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.DescribeEnvironmentRequest;
+import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.UpdateEnvironmentRequest;
+import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.DeleteEnvironmentRequest;
+import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.CreateEnvironmentResponse;
+import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.DescribeEnvironmentResponse;
+import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.UpdateEnvironmentResponse;
+
 import configuration.CucumberConfiguration;
 import cucumber.api.java8.En;
 import org.springframework.beans.factory.annotation.Autowired;

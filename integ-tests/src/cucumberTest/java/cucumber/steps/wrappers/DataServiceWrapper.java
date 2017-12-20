@@ -18,6 +18,12 @@ import com.amazonaws.blox.dataservicemodel.v1.client.DataService;
 import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.CreateEnvironmentRequest;
 import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.CreateEnvironmentResponse;
 import cucumber.steps.helpers.ExceptionContext;
+import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.DescribeEnvironmentRequest;
+import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.UpdateEnvironmentRequest;
+import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.DeleteEnvironmentRequest;
+import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.DescribeEnvironmentResponse;
+import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.UpdateEnvironmentResponse;
+import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.DeleteEnvironmentResponse;
 
 import java.util.function.Consumer;
 
