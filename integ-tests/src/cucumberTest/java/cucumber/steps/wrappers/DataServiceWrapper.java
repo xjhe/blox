@@ -42,7 +42,7 @@ public class DataServiceWrapper extends MemoizedWrapper {
       CreateEnvironmentRequest createEnvironmentRequest) {
     return memoizeFunction(createEnvironmentRequest, dataService::createEnvironment);
   }
-  
+
   public DescribeEnvironmentResponse describeEnvironment(
       DescribeEnvironmentRequest describeEnvironmentRequest) {
     return memoizeInputAndCall(describeEnvironmentRequest, dataService::describeEnvironment);
