@@ -11,6 +11,7 @@ addCucumberSuite 'cucumberTest'
 
 cucumberTest {
     tags = ["~@ignore"]
+    stepDefinitionRoots = ['steps']
 }
 
 dependencies {
