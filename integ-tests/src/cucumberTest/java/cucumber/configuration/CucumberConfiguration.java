@@ -59,4 +59,9 @@ public class CucumberConfiguration {
   public CloudFormationClient cloudFormationClient() {
     return CloudFormationClient.create();
   }
+
+  @Bean
+  public InputCreator inputCreator() {
+    return new InputCreator();
+  }
 }

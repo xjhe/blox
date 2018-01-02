@@ -29,13 +29,11 @@ import steps.helpers.InputCreator;
 import steps.wrappers.DataServiceWrapper;
 import static org.junit.Assert.assertTrue;
 
-import java.util.UUID;
-
 @ContextConfiguration(classes = CucumberConfiguration.class)
 public class DescribeEnvironmentSteps implements En {
 
   @Autowired private DataServiceWrapper dataServiceWrapper;
-  private final InputCreator inputCreator = new InputCreator();
+  @Autowired private InputCreator inputCreator;
 
   public DescribeEnvironmentSteps() {
 
