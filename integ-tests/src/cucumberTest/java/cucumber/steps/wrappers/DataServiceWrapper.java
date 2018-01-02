@@ -63,6 +63,10 @@ public class DataServiceWrapper extends MemoizedWrapper {
     captureException(describeEnvironmentRequest, this::describeEnvironment);
   }
 
+  public void tryUpdateEnvironment(UpdateEnvironmentRequest updateEnvironmentRequest) {
+    captureException(updateEnvironmentRequest, this::updateEnvironment);
+  }
+
   public void tryDeleteEnvironment(DeleteEnvironmentRequest deleteEnvironmentRequest) {
     captureException(deleteEnvironmentRequest, this::deleteEnvironment);
   }
@@ -70,7 +74,9 @@ public class DataServiceWrapper extends MemoizedWrapper {
   private <T, R> R memoizeInputAndCall(final T input, ThrowingFunction<T, R> fn) {
     Validate.notNull(input);
     addToHistory((Class<T>) input.getClass(), input);
-    return fn.apply(input);
+    final R response = fn.apply(input);
+    addToHistory((Class<R>) response.getClass(), response);
+    return response;
   }
 
 

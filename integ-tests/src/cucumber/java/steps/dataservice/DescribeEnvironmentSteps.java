@@ -16,12 +16,7 @@ package steps.dataservice;
 
 import com.amazonaws.blox.dataservicemodel.v1.model.Environment;
 import com.amazonaws.blox.dataservicemodel.v1.model.EnvironmentId;
-import com.amazonaws.blox.dataservicemodel.v1.model.EnvironmentType;
-import com.amazonaws.blox.dataservicemodel.v1.model.InstanceGroup;
 import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.CreateEnvironmentRequest;
-import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.DescribeEnvironmentRequest;
-import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.UpdateEnvironmentRequest;
-import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.DeleteEnvironmentRequest;
 import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.CreateEnvironmentResponse;
 import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.DescribeEnvironmentResponse;
 import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.UpdateEnvironmentResponse;
@@ -30,6 +25,7 @@ import configuration.CucumberConfiguration;
 import cucumber.api.java8.En;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import steps.helpers.InputCreator;
 import steps.wrappers.DataServiceWrapper;
 import static org.junit.Assert.assertTrue;
 
@@ -39,25 +35,17 @@ import java.util.UUID;
 public class DescribeEnvironmentSteps implements En {
 
   @Autowired private DataServiceWrapper dataServiceWrapper;
-  private static final String ACCOUNT_ID = "accountID";
-  private static final String TASK_DEFINITION_ARN =
-      "arn:aws:ecs:us-east-1:" + ACCOUNT_ID + ":task-definition/sleep";
-  private static final String ROLE_ARN = "arn:aws:iam::" + ACCOUNT_ID + ":role/testRole";
-  private static final String CLUSTER_NAME_PREFIX = "cluster";
-  private String postfix = null;
+  private final InputCreator inputCreator = new InputCreator();
 
   public DescribeEnvironmentSteps() {
-    Given(
-        "^I create an environment named \"([^\"]*)\"$",
-        (final String environmentNamePrefix) -> {
-          this.postfix = generatePostfix();
-          dataServiceWrapper.createEnvironment(createEnvironmentRequest(environmentNamePrefix));
-        });
 
     When(
-        "^I describe the environment named \"([^\"]*)\"$",
-        (final String environmentNamePrefix) -> {
-          dataServiceWrapper.describeEnvironment(describeEnvironmentRequest(environmentNamePrefix));
+        "^I describe the created environment$",
+        () -> {
+          final EnvironmentId environmentId = getEnvironmentIdFromCreatedEnvironment();
+          dataServiceWrapper.describeEnvironment(
+              inputCreator.describeEnvironmentRequest(
+                  environmentId.getEnvironmentName(), environmentId.getCluster()));
         });
 
     Then(
@@ -73,9 +61,12 @@ public class DescribeEnvironmentSteps implements En {
         });
 
     Given(
-        "^I update the environment named \"([^\"]*)\"$",
+        "^I update the created environment$",
         (final String environmentNamePrefix) -> {
-          dataServiceWrapper.updateEnvironment(updateEnvironmentRequest(environmentNamePrefix));
+          final EnvironmentId environmentId = getEnvironmentIdFromCreatedEnvironment();
+          dataServiceWrapper.updateEnvironment(
+              inputCreator.updateEnvironmentRequest(
+                  environmentId.getEnvironmentName(), environmentId.getCluster()));
         });
 
     Then(
@@ -94,101 +85,26 @@ public class DescribeEnvironmentSteps implements En {
         "^I try to describe a non-existent environment named \"([^\"]*)\"$",
         (final String environmentNamePrefix) -> {
           dataServiceWrapper.tryDescribeEnvironment(
-              describeEnvironmentRequest(environmentNamePrefix));
+              inputCreator.describeEnvironmentRequest(environmentNamePrefix));
         });
 
     Given(
-        "^I delete the created environment named \"([^\"]*)\"$",
-        (final String environmentNamePrefix) -> {
-          dataServiceWrapper.tryDeleteEnvironment(deleteEnvironmentRequest(environmentNamePrefix));
+        "^I delete the created environment$",
+        () -> {
+          final EnvironmentId environmentId = getEnvironmentIdFromCreatedEnvironment();
+          dataServiceWrapper.deleteEnvironment(
+              inputCreator.deleteEnvironmentRequest(
+                  environmentId.getEnvironmentName(), environmentId.getCluster()));
         });
 
     When(
-        "^I try to describe the environment named \"([^\"]*)\"$",
-        (final String environmentNamePrefix) -> {
+        "^I try to describe the created environment$",
+        () -> {
+          final EnvironmentId environmentId = getEnvironmentIdFromCreatedEnvironment();
           dataServiceWrapper.tryDescribeEnvironment(
-              describeEnvironmentRequest(environmentNamePrefix));
+              inputCreator.describeEnvironmentRequest(
+                  environmentId.getEnvironmentName(), environmentId.getCluster()));
         });
-  }
-
-  private DescribeEnvironmentRequest describeEnvironmentRequest(
-      final String environmentNamePrefix) {
-    final String environmentName = environmentNamePrefix + this.postfix;
-    final String clusterName = CLUSTER_NAME_PREFIX + this.postfix;
-    return describeEnvironmentRequest(environmentName, clusterName);
-  }
-
-  private DescribeEnvironmentRequest describeEnvironmentRequest(
-      final String environmentName, final String cluster) {
-    return DescribeEnvironmentRequest.builder()
-        .environmentId(
-            EnvironmentId.builder()
-                .accountId(ACCOUNT_ID)
-                .cluster(cluster)
-                .environmentName(environmentName)
-                .build())
-        .build();
-  }
-
-  private CreateEnvironmentRequest createEnvironmentRequest(final String environmentNamePrefix) {
-    final String environmentName = environmentNamePrefix + this.postfix;
-    final String clusterName = CLUSTER_NAME_PREFIX + this.postfix;
-    return createEnvironmentRequest(environmentName, clusterName);
-  }
-
-  private CreateEnvironmentRequest createEnvironmentRequest(
-      final String environmentName, final String cluster) {
-    return CreateEnvironmentRequest.builder()
-        .environmentId(
-            EnvironmentId.builder()
-                .accountId(ACCOUNT_ID)
-                .cluster(cluster)
-                .environmentName(environmentName)
-                .build())
-        .role(ROLE_ARN)
-        .taskDefinition(TASK_DEFINITION_ARN)
-        .environmentType(EnvironmentType.Daemon)
-        .build();
-  }
-
-  private UpdateEnvironmentRequest updateEnvironmentRequest(final String environmentNamePrefix) {
-    final String environmentName = environmentNamePrefix + this.postfix;
-    final String clusterName = CLUSTER_NAME_PREFIX + this.postfix;
-    return updateEnvironmentRequest(environmentName, clusterName);
-  }
-
-  private UpdateEnvironmentRequest updateEnvironmentRequest(
-      final String environmentName, final String cluster) {
-    return UpdateEnvironmentRequest.builder()
-        .environmentId(
-            EnvironmentId.builder()
-                .accountId(ACCOUNT_ID)
-                .cluster(cluster)
-                .environmentName(environmentName)
-                .build())
-        .role(ROLE_ARN)
-        .taskDefinition(TASK_DEFINITION_ARN)
-        .instanceGroup(InstanceGroup.builder().attributes(null).build())
-        .build();
-  }
-
-  private DeleteEnvironmentRequest deleteEnvironmentRequest(final String environmentNamePrefix) {
-    final String environmentName = environmentNamePrefix + this.postfix;
-    final String clusterName = CLUSTER_NAME_PREFIX + this.postfix;
-    return deleteEnvironmentRequest(environmentName, clusterName);
-  }
-
-  private DeleteEnvironmentRequest deleteEnvironmentRequest(
-      final String environmentName, final String cluster) {
-    return DeleteEnvironmentRequest.builder()
-        .environmentId(
-            EnvironmentId.builder()
-                .accountId(ACCOUNT_ID)
-                .cluster(cluster)
-                .environmentName(environmentName)
-                .build())
-        .forceDelete(false)
-        .build();
   }
 
   // TODO: Currently just check if the environment are equal to the other. May only need to just compare the equality of some fields but not all
@@ -197,7 +113,9 @@ public class DescribeEnvironmentSteps implements En {
     assertTrue(thisEnvironment.equals(otherEnvironment));
   }
 
-  private String generatePostfix() {
-    return UUID.randomUUID().toString();
+  private EnvironmentId getEnvironmentIdFromCreatedEnvironment() {
+    final CreateEnvironmentRequest createEnvironmentRequest =
+        dataServiceWrapper.getLastFromHistory(CreateEnvironmentRequest.class);
+    return createEnvironmentRequest.getEnvironmentId();
   }
 }
