@@ -28,7 +28,7 @@ import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
 @ComponentScan("cucumber.steps")
 public class CucumberConfiguration {
 
-  public static final String DATASERVICE_STACK = "data-service";
+  public static final String DATASERVICE_STACK = "dataservice";
   public static final String DATASERVICE_LAMBDA_FUNCTION_KEY = "DataService";
 
   @Bean
