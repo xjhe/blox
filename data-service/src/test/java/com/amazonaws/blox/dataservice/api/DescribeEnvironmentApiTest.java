@@ -90,7 +90,7 @@ public class DescribeEnvironmentApiTest {
 
   @Test
   public void describeEnvironmentSuccess() throws Exception {
-    when(environmentRepository.getEnvironment(isA(EnvironmentId.class))).thenReturn(environment);
+    when(environmentRepository.getEnvironment(environmentId)).thenReturn(environment);
     final DescribeEnvironmentResponse describeEnvironmentResponse =
         describeEnvironmentApi.describeEnvironment(describeEnvironmentRequest);
 
