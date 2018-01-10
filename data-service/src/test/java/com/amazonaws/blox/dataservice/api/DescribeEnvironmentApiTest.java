@@ -138,7 +138,8 @@ public class DescribeEnvironmentApiTest {
 
   @Test(expected = InternalServiceException.class)
   public void describeEnvironmentInternalServiceExceptionWithUnknownException() throws Exception {
-    when(environmentRepository.getEnvironment(isA(EnvironmentId.class))).thenReturn(null);
+    when(environmentRepository.getEnvironment(isA(EnvironmentId.class)))
+        .thenThrow(new IllegalStateException(""));
     describeEnvironmentApi.describeEnvironment(describeEnvironmentRequest);
   }
 }
