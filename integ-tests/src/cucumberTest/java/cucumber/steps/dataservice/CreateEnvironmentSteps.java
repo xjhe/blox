@@ -72,6 +72,7 @@ public class CreateEnvironmentSteps implements En {
 
           assertNotNull(response.getEnvironment().getCreatedTime());
           assertNotNull(response.getEnvironment().getLatestEnvironmentRevisionId());
+          assertNotNull(response.getEnvironment().getDeploymentMethod());
           assertEquals(EnvironmentHealth.HEALTHY, response.getEnvironment().getEnvironmentHealth());
           assertEquals(
               EnvironmentStatus.INACTIVE, response.getEnvironment().getEnvironmentStatus());
