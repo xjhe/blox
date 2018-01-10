@@ -24,19 +24,17 @@ import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.DescribeEnvironment
 import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.DescribeEnvironmentResponse;
 
 import lombok.NonNull;
-import lombok.AllArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Value
-@AllArgsConstructor
 public class DescribeEnvironmentApi {
   @NonNull private ApiModelMapper apiModelMapper;
   @NonNull private EnvironmentRepository environmentRepository;
 
   public DescribeEnvironmentResponse describeEnvironment(
-      final DescribeEnvironmentRequest describeEnvironmentRequest)
+      @NonNull final DescribeEnvironmentRequest describeEnvironmentRequest)
       throws ResourceNotFoundException, InternalServiceException {
     final com.amazonaws.blox.dataservicemodel.v1.model.EnvironmentId environmentIdFromRequest =
         describeEnvironmentRequest.getEnvironmentId();

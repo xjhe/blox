@@ -26,8 +26,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mapstruct.factory.Mappers;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -46,16 +44,15 @@ public class DescribeEnvironmentApiTest {
   private static final String ROLE_ARN = "role";
   private static final String ACTIVE_ENVIRONMENT_REVISION_ID = "123456789012_cluster_name";
   private static final String DEPLOYMENT_METHOD = "deploymentMethod";
+  private static final ApiModelMapper apiModelMapper = Mappers.getMapper(ApiModelMapper.class);
 
   @Mock private EnvironmentRepository environmentRepository;
-  @Captor private ArgumentCaptor<EnvironmentId> environmentIdArgumentCaptor;
 
   private Environment environment;
   private EnvironmentId environmentId;
   private com.amazonaws.blox.dataservicemodel.v1.model.EnvironmentId environmentIdWrapper;
   private DescribeEnvironmentRequest describeEnvironmentRequest;
   private DescribeEnvironmentApi describeEnvironmentApi;
-  private ApiModelMapper apiModelMapper = Mappers.getMapper(ApiModelMapper.class);
 
   @Before
   public void setup() {
@@ -97,8 +94,7 @@ public class DescribeEnvironmentApiTest {
     final DescribeEnvironmentResponse describeEnvironmentResponse =
         describeEnvironmentApi.describeEnvironment(describeEnvironmentRequest);
 
-    verify(environmentRepository).getEnvironment(environmentIdArgumentCaptor.capture());
-    assertEquals(environmentIdArgumentCaptor.getValue(), environmentId);
+    verify(environmentRepository).getEnvironment(environmentId);
 
     assertEquals(
         describeEnvironmentResponse.getEnvironment().getEnvironmentId(), environmentIdWrapper);
@@ -137,6 +133,12 @@ public class DescribeEnvironmentApiTest {
   public void describeEnvironmentInternalServiceException() throws Exception {
     when(environmentRepository.getEnvironment(isA(EnvironmentId.class)))
         .thenThrow(new InternalServiceException(""));
+    describeEnvironmentApi.describeEnvironment(describeEnvironmentRequest);
+  }
+
+  @Test(expected = InternalServiceException.class)
+  public void describeEnvironmentInternalServiceExceptionWithUnknownException() throws Exception {
+    when(environmentRepository.getEnvironment(isA(EnvironmentId.class))).thenReturn(null);
     describeEnvironmentApi.describeEnvironment(describeEnvironmentRequest);
   }
 }
