@@ -10,8 +10,8 @@ Feature: Describe environment
 
   Scenario: Describe an updated environment
     Given I create an environment named "test"
-    And I update the created environment
-    When I describe the created environment
+    And I update the created environment with cluster name "new-task-definition"
+    When I describe the updated environment
     Then the updated and described environments match
 
   Scenario: Describe a non-existent environment

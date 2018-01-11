@@ -59,7 +59,7 @@ public class DataServiceWrapper extends MemoizedWrapper {
   public void tryCreateEnvironment(CreateEnvironmentRequest createEnvironmentRequest) {
     captureException(createEnvironmentRequest, this::createEnvironment);
   }
-  
+
   public void tryDescribeEnvironment(DescribeEnvironmentRequest describeEnvironmentRequest) {
     captureException(describeEnvironmentRequest, this::describeEnvironment);
   }
@@ -79,7 +79,6 @@ public class DataServiceWrapper extends MemoizedWrapper {
     addToHistory((Class<R>) response.getClass(), response);
     return response;
   }
-
 
   private <T> void captureException(final T input, final Consumer<T> consumer) {
     try {

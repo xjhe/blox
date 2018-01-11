@@ -12,21 +12,19 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package steps.dataservice;
+package cucumber.steps.dataservice;
 
 import com.amazonaws.blox.dataservicemodel.v1.model.Environment;
 import com.amazonaws.blox.dataservicemodel.v1.model.EnvironmentId;
-import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.CreateEnvironmentRequest;
-import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.CreateEnvironmentResponse;
-import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.DescribeEnvironmentResponse;
-import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.UpdateEnvironmentResponse;
+import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.*;
 
-import configuration.CucumberConfiguration;
 import cucumber.api.java8.En;
+import cucumber.configuration.CucumberConfiguration;
+import cucumber.steps.wrappers.DataServiceWrapper;
+import cucumber.steps.helpers.InputCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import steps.helpers.InputCreator;
-import steps.wrappers.DataServiceWrapper;
+
 import static org.junit.Assert.assertTrue;
 
 @ContextConfiguration(classes = CucumberConfiguration.class)
@@ -46,6 +44,15 @@ public class DescribeEnvironmentSteps implements En {
                   environmentId.getEnvironmentName(), environmentId.getCluster()));
         });
 
+    When(
+        "^I describe the updated environment$",
+        () -> {
+          final EnvironmentId environmentId = getEnvironmentIdFromUpdatedEnvironment();
+          dataServiceWrapper.describeEnvironment(
+              inputCreator.describeEnvironmentRequest(
+                  environmentId.getEnvironmentName(), environmentId.getCluster()));
+        });
+
     Then(
         "^the created and described environments match$",
         () -> {
@@ -59,12 +66,12 @@ public class DescribeEnvironmentSteps implements En {
         });
 
     Given(
-        "^I update the created environment$",
-        (final String environmentNamePrefix) -> {
+        "^I update the created environment with cluster name \"([^\"]*)\"$",
+        (final String newCluster) -> {
           final EnvironmentId environmentId = getEnvironmentIdFromCreatedEnvironment();
           dataServiceWrapper.updateEnvironment(
-              inputCreator.updateEnvironmentRequest(
-                  environmentId.getEnvironmentName(), environmentId.getCluster()));
+              inputCreator.updateEnvironmentRequestWithNewCluster(
+                  environmentId.getEnvironmentName(), newCluster));
         });
 
     Then(
@@ -115,5 +122,11 @@ public class DescribeEnvironmentSteps implements En {
     final CreateEnvironmentRequest createEnvironmentRequest =
         dataServiceWrapper.getLastFromHistory(CreateEnvironmentRequest.class);
     return createEnvironmentRequest.getEnvironmentId();
+  }
+
+  private EnvironmentId getEnvironmentIdFromUpdatedEnvironment() {
+    final UpdateEnvironmentRequest updateEnvironmentRequest =
+        dataServiceWrapper.getLastFromHistory(UpdateEnvironmentRequest.class);
+    return updateEnvironmentRequest.getEnvironmentId();
   }
 }

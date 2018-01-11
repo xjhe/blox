@@ -30,7 +30,7 @@ import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.CreateEnvironmentRe
 import cucumber.configuration.CucumberConfiguration;
 import cucumber.api.PendingException;
 import cucumber.api.java8.En;
-
+import cucumber.steps.helpers.InputCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -38,10 +38,8 @@ import cucumber.steps.wrappers.DataServiceWrapper;
 
 @ContextConfiguration(classes = CucumberConfiguration.class)
 public class CreateEnvironmentSteps implements En {
-  @Außßtowired
-  private DataServiceWrapper dataServiceWrapper;
+  @Autowired private DataServiceWrapper dataServiceWrapper;
   @Autowired private InputCreator inputCreator;
-
 
   public CreateEnvironmentSteps() {
     When(
@@ -125,5 +123,4 @@ public class CreateEnvironmentSteps implements En {
           throw new PendingException();
         });
   }
-
 }

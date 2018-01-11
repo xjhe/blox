@@ -12,7 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package steps.helpers;
+package cucumber.steps.helpers;
 
 import com.amazonaws.blox.dataservicemodel.v1.model.EnvironmentId;
 import com.amazonaws.blox.dataservicemodel.v1.model.EnvironmentType;
@@ -63,6 +63,7 @@ public class InputCreator {
         .role(ROLE_ARN)
         .taskDefinition(TASK_DEFINITION_ARN)
         .environmentType(EnvironmentType.Daemon)
+        .deploymentMethod("ReplaceAfterTerminate")
         .build();
   }
 
@@ -78,7 +79,7 @@ public class InputCreator {
         .build();
   }
 
-  public UpdateEnvironmentRequest updateEnvironmentRequest(
+  public UpdateEnvironmentRequest updateEnvironmentRequestWithNewCluster(
       final String environmentName, final String cluster) {
     return UpdateEnvironmentRequest.builder()
         .environmentId(
