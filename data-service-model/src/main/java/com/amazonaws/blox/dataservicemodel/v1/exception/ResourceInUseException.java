@@ -14,11 +14,9 @@
  */
 package com.amazonaws.blox.dataservicemodel.v1.exception;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
+import lombok.Getter;
 
-@Value
-@EqualsAndHashCode(callSuper = false)
+@Getter
 public class ResourceInUseException extends ClientException {
 
   private String resourceType;
