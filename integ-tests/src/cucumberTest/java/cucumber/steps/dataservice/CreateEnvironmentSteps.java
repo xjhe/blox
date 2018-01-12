@@ -18,13 +18,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import com.amazonaws.blox.dataservicemodel.v1.model.EnvironmentHealth;
-
-import com.amazonaws.blox.dataservicemodel.v1.model.EnvironmentId;
 import com.amazonaws.blox.dataservicemodel.v1.model.EnvironmentStatus;
-import com.amazonaws.blox.dataservicemodel.v1.model.EnvironmentType;
-
-import com.amazonaws.blox.dataservicemodel.v1.model.EnvironmentStatus;
-
 import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.CreateEnvironmentRequest;
 import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.CreateEnvironmentResponse;
 import cucumber.configuration.CucumberConfiguration;
