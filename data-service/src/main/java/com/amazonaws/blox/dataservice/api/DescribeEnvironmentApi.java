@@ -26,8 +26,10 @@ import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.DescribeEnvironment
 import lombok.NonNull;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 @Slf4j
+@Component
 @Value
 public class DescribeEnvironmentApi {
   @NonNull private ApiModelMapper apiModelMapper;
