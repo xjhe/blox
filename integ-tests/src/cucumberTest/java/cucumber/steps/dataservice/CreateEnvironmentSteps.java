@@ -78,7 +78,6 @@ public class CreateEnvironmentSteps implements En {
 
           assertNotNull(response.getEnvironmentRevision().getCreatedTime());
           assertNotNull(response.getEnvironmentRevision().getEnvironmentRevisionId());
-          throw new PendingException();
         });
 
     When(
