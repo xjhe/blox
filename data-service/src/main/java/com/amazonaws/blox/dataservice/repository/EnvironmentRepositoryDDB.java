@@ -416,4 +416,21 @@ public class EnvironmentRepositoryDDB implements EnvironmentRepository {
 
     return stream.collect(Collectors.toList());
   }
+
+  @Override
+  public void deleteEnvironment(@NonNull final EnvironmentId environmentId)
+      throws InternalServiceException {
+    try {
+      dynamoDBMapper.delete(
+          EnvironmentDDBRecord.withKeys(
+              environmentId.generateAccountIdCluster(), environmentId.getEnvironmentName()),
+          SaveBehavior.CLOBBER.config());
+    } catch (final AmazonServiceException e) {
+      throw new InternalServiceException(
+          String.format(
+              "Fail to delete environment with accountIdCluster %s and environment name %s",
+              environmentId.generateAccountIdCluster(), environmentId.getEnvironmentName()),
+          e);
+    }
+  }
 }
