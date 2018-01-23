@@ -42,6 +42,9 @@ public class DeleteEnvironmentApi {
     final EnvironmentId environmentId =
         apiModelMapper.toModelEnvironmentId(request.getEnvironmentId());
     try {
+      // Get the environment to check it exists
+      final Environment environment = environmentRepository.getEnvironment(environmentId);
+
       // List and delete all environment revisions
       final List<EnvironmentRevision> environmentRevisions =
           environmentRepository.listEnvironmentRevisions(environmentId);
@@ -51,8 +54,6 @@ public class DeleteEnvironmentApi {
         environmentRepository.deleteEnvironmentRevision(revision);
       }
 
-      // Get the environment to check it exist
-      final Environment environment = environmentRepository.getEnvironment(environmentId);
       // Delete the environment
       environmentRepository.deleteEnvironment(environmentId);
       return DeleteEnvironmentResponse.builder()

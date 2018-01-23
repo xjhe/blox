@@ -77,9 +77,6 @@ public class DeleteEnvironmentApiTest {
 
   @Test(expected = ResourceNotFoundException.class)
   public void testDeleteEnvironmentResourceNotFoundException() throws Exception {
-    when(environmentRepository.listEnvironmentRevisions(environmentId))
-        .thenReturn(Collections.singletonList(environmentRevision));
-    doNothing().when(environmentRepository).deleteEnvironmentRevision(environmentRevision);
     when(environmentRepository.getEnvironment(environmentId)).thenThrow(resourceNotFoundException);
 
     deleteEnvironmentApi.deleteEnvironment(deleteEnvironmentRequest);

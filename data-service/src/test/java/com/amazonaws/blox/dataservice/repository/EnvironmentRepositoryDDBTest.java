@@ -242,13 +242,10 @@ public class EnvironmentRepositoryDDBTest {
 
   @Test
   public void testDeleteEnvironmentSuccess() throws Exception {
-    doNothing()
-        .when(dynamoDBMapper)
-        .delete(any(EnvironmentDDBRecord.class), any(DynamoDBMapperConfig.class));
+    doNothing().when(dynamoDBMapper).delete(any(EnvironmentDDBRecord.class));
 
     environmentRepositoryDDB.deleteEnvironment(environmentId);
-    verify(dynamoDBMapper, times(1))
-        .delete(environmentDDBRecordArgumentCaptor.capture(), eq(CONFIG));
+    verify(dynamoDBMapper, times(1)).delete(environmentDDBRecordArgumentCaptor.capture());
     assertEquals(
         environmentId.generateAccountIdCluster(),
         environmentDDBRecordArgumentCaptor.getValue().getAccountIdCluster());
@@ -261,7 +258,7 @@ public class EnvironmentRepositoryDDBTest {
   public void testDeleteEnvironmentInternalError() throws Exception {
     doThrow(AmazonServiceException.class)
         .when(dynamoDBMapper)
-        .delete(any(EnvironmentDDBRecord.class), any(DynamoDBMapperConfig.class));
+        .delete(any(EnvironmentDDBRecord.class));
 
     thrown.expect(InternalServiceException.class);
     thrown.expectMessage(
