@@ -90,7 +90,6 @@ public class CreateEnvironmentIntegrationTest extends DataServiceIntegrationTest
                 .build());
     assertThat(createEnvironmentResponse1.getEnvironment().getEnvironmentId())
         .isEqualTo(createdEnvironmentId1);
-
     final CreateEnvironmentResponse createEnvironmentResponse2 =
         dataService.createEnvironment(
             models
