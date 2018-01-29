@@ -56,7 +56,8 @@ public class CreateEnvironmentIntegrationTest extends DataServiceIntegrationTest
                 .taskDefinition(TASK_DEFINITION)
                 .environmentId(createdEnvironmentId1)
                 .build());
-    checkEnvironmentValid(ENVIRONMENT_NAME, ACCOUNT_ID, CLUSTER_ONE, createEnvironmentResponse);
+    assertThat(createEnvironmentResponse.getEnvironment().getEnvironmentId())
+        .isEqualTo(createdEnvironmentId1);
   }
 
   @Test
@@ -89,7 +90,8 @@ public class CreateEnvironmentIntegrationTest extends DataServiceIntegrationTest
                 .taskDefinition(TASK_DEFINITION)
                 .environmentId(createdEnvironmentId1)
                 .build());
-    checkEnvironmentValid(ENVIRONMENT_NAME, ACCOUNT_ID, CLUSTER_ONE, createEnvironmentResponse1);
+    assertThat(createEnvironmentResponse1.getEnvironment().getEnvironmentId())
+        .isEqualTo(createdEnvironmentId1);
 
     final CreateEnvironmentResponse createEnvironmentResponse2 =
         dataService.createEnvironment(
@@ -98,19 +100,7 @@ public class CreateEnvironmentIntegrationTest extends DataServiceIntegrationTest
                 .taskDefinition(TASK_DEFINITION)
                 .environmentId(createdEnvironmentId2)
                 .build());
-    checkEnvironmentValid(ENVIRONMENT_NAME, ACCOUNT_ID, CLUSTER_TWO, createEnvironmentResponse2);
-  }
-
-  private void checkEnvironmentValid(
-      final String environmentName,
-      final String accountId,
-      final String cluster,
-      final CreateEnvironmentResponse createEnvironmentResponse) {
-    assertThat(createEnvironmentResponse.getEnvironment().getEnvironmentId().getEnvironmentName())
-        .isEqualTo(environmentName);
-    assertThat(createEnvironmentResponse.getEnvironment().getEnvironmentId().getAccountId())
-        .isEqualTo(accountId);
-    assertThat(createEnvironmentResponse.getEnvironment().getEnvironmentId().getCluster())
-        .isEqualTo(cluster);
+    assertThat(createEnvironmentResponse2.getEnvironment().getEnvironmentId())
+        .isEqualTo(createdEnvironmentId2);
   }
 }

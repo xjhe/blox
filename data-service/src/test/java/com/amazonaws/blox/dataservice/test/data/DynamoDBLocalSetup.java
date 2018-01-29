@@ -19,7 +19,6 @@ import com.amazonaws.blox.dataservice.repository.model.EnvironmentRevisionDDBRec
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
-import com.amazonaws.services.dynamodbv2.model.DeleteTableRequest;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 
 public class DynamoDBLocalSetup {
@@ -43,15 +42,5 @@ public class DynamoDBLocalSetup {
 
     amazonDynamoDB.createTable(createEnvironments);
     amazonDynamoDB.createTable(createEnvironmentRevisions);
-  }
-
-  public void deleteTables(
-      final DynamoDBMapper dynamoDBMapper, final AmazonDynamoDB amazonDynamoDB) {
-    DeleteTableRequest deleteEnvironmentTableRequest =
-        dynamoDBMapper.generateDeleteTableRequest(EnvironmentDDBRecord.class);
-    amazonDynamoDB.deleteTable(deleteEnvironmentTableRequest);
-    DeleteTableRequest deleteEnvironmentRevisionTableRequest =
-        dynamoDBMapper.generateDeleteTableRequest(EnvironmentRevisionDDBRecord.class);
-    amazonDynamoDB.deleteTable(deleteEnvironmentRevisionTableRequest);
   }
 }

@@ -33,10 +33,9 @@ public abstract class DataServiceIntegrationTestBase {
   @Autowired private DynamoDBMapper dynamoDBMapper;
   @Autowired DataService dataService;
 
-  private final DynamoDBLocalSetup dynamoDBLocalSetup = new DynamoDBLocalSetup();
-
   @Before
   public void setup() {
+    final DynamoDBLocalSetup dynamoDBLocalSetup = new DynamoDBLocalSetup();
     dynamoDBLocalSetup.createTables(dynamoDBMapper, amazonDynamoDB);
   }
 }
