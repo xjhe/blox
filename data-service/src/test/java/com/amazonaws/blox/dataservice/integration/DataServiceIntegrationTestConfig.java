@@ -14,22 +14,20 @@
  */
 package com.amazonaws.blox.dataservice.integration;
 
-import com.amazonaws.blox.dataservice.mapper.ApiModelMapper;
-import com.amazonaws.blox.dataservice.mapper.EnvironmentMapper;
-import org.mapstruct.factory.Mappers;
+import com.amazonaws.blox.dataservice.Application;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.local.embedded.DynamoDBEmbedded;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
+@Import({Application.class})
 @Configuration
 public class DataServiceIntegrationTestConfig {
 
   @Bean
-  public EnvironmentMapper environmentMapper() {
-    return Mappers.getMapper(EnvironmentMapper.class);
+  public AmazonDynamoDB dynamoDBClient() {
+    return DynamoDBEmbedded.create().amazonDynamoDB();
   }
 
-  @Bean
-  public ApiModelMapper apiModelMapper() {
-    return Mappers.getMapper(ApiModelMapper.class);
-  }
 }

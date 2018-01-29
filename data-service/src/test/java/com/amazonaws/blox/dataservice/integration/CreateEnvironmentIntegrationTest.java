@@ -14,7 +14,7 @@
  */
 package com.amazonaws.blox.dataservice.integration;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.amazonaws.blox.dataservicemodel.v1.exception.ResourceExistsException;
 import com.amazonaws.blox.dataservicemodel.v1.model.EnvironmentId;
@@ -29,71 +29,59 @@ public class CreateEnvironmentIntegrationTest extends DataServiceIntegrationTest
   private static final String CLUSTER_ONE = "cluster1";
   private static final String CLUSTER_TWO = "cluster2";
   private static final String TASK_DEFINITION = "taskDefinition";
+  private static final DataServiceModelBuilder models = DataServiceModelBuilder.builder().build();
+  private static final EnvironmentId createdEnvironmentId1 =
+      models
+          .environmentId()
+          .accountId(ACCOUNT_ID)
+          .environmentName(ENVIRONMENT_NAME)
+          .cluster(CLUSTER_ONE)
+          .build();
+  private static final EnvironmentId createdEnvironmentId2 =
+      models
+          .environmentId()
+          .accountId(ACCOUNT_ID)
+          .environmentName(ENVIRONMENT_NAME)
+          .cluster(CLUSTER_TWO)
+          .build();
 
-  DataServiceModelBuilder models = DataServiceModelBuilder.builder().build();
   @Rule public ExpectedException thrown = ExpectedException.none();
 
   @Test
   public void testCreateEnvironmentSuccessful() throws Exception {
-    final EnvironmentId createdEnvironmentId =
-        models
-            .environmentId()
-            .accountId(ACCOUNT_ID)
-            .environmentName(ENVIRONMENT_NAME)
-            .cluster(CLUSTER_ONE)
-            .build();
-    // I create an environment
     final CreateEnvironmentResponse createEnvironmentResponse =
         dataService.createEnvironment(
             models
                 .createEnvironmentRequest()
                 .taskDefinition(TASK_DEFINITION)
-                .environmentId(createdEnvironmentId)
+                .environmentId(createdEnvironmentId1)
                 .build());
-
-    // The environment is valid
     checkEnvironmentValid(ENVIRONMENT_NAME, ACCOUNT_ID, CLUSTER_ONE, createEnvironmentResponse);
   }
 
   @Test
   public void testCreateAnEnvironmentAlreadyExist() throws Exception {
-    final EnvironmentId createdEnvironmentId =
-        models
-            .environmentId()
-            .accountId(ACCOUNT_ID)
-            .environmentName(ENVIRONMENT_NAME)
-            .cluster(CLUSTER_ONE)
-            .build();
-    // I create an environment
     dataService.createEnvironment(
         models
             .createEnvironmentRequest()
             .taskDefinition(TASK_DEFINITION)
-            .environmentId(createdEnvironmentId)
+            .environmentId(createdEnvironmentId1)
             .build());
+
     thrown.expect(ResourceExistsException.class);
     thrown.expectMessage(
-        String.format("environment with id %s already exists", createdEnvironmentId));
+        String.format("environment with id %s already exists", createdEnvironmentId1));
 
-    // I try to create another environment with the same name and cluster
     dataService.createEnvironment(
         models
             .createEnvironmentRequest()
             .taskDefinition(TASK_DEFINITION)
-            .environmentId(createdEnvironmentId)
+            .environmentId(createdEnvironmentId1)
             .build());
   }
 
   @Test
   public void testCreateTwoEnvironmentsWithTheSameNameButDifferentClusters() throws Exception {
-    final EnvironmentId createdEnvironmentId1 =
-        models
-            .environmentId()
-            .accountId(ACCOUNT_ID)
-            .environmentName(ENVIRONMENT_NAME)
-            .cluster(CLUSTER_ONE)
-            .build();
-    // I create an environment
     final CreateEnvironmentResponse createEnvironmentResponse1 =
         dataService.createEnvironment(
             models
@@ -101,17 +89,8 @@ public class CreateEnvironmentIntegrationTest extends DataServiceIntegrationTest
                 .taskDefinition(TASK_DEFINITION)
                 .environmentId(createdEnvironmentId1)
                 .build());
-    // The environment is valid
     checkEnvironmentValid(ENVIRONMENT_NAME, ACCOUNT_ID, CLUSTER_ONE, createEnvironmentResponse1);
 
-    final EnvironmentId createdEnvironmentId2 =
-        models
-            .environmentId()
-            .accountId(ACCOUNT_ID)
-            .environmentName(ENVIRONMENT_NAME)
-            .cluster(CLUSTER_TWO)
-            .build();
-    // I create anohter environment with the same name but different cluster
     final CreateEnvironmentResponse createEnvironmentResponse2 =
         dataService.createEnvironment(
             models
@@ -119,8 +98,6 @@ public class CreateEnvironmentIntegrationTest extends DataServiceIntegrationTest
                 .taskDefinition(TASK_DEFINITION)
                 .environmentId(createdEnvironmentId2)
                 .build());
-
-    // The second environment is also valid
     checkEnvironmentValid(ENVIRONMENT_NAME, ACCOUNT_ID, CLUSTER_TWO, createEnvironmentResponse2);
   }
 
@@ -129,12 +106,11 @@ public class CreateEnvironmentIntegrationTest extends DataServiceIntegrationTest
       final String accountId,
       final String cluster,
       final CreateEnvironmentResponse createEnvironmentResponse) {
-    assertEquals(
-        environmentName,
-        createEnvironmentResponse.getEnvironment().getEnvironmentId().getEnvironmentName());
-    assertEquals(
-        accountId, createEnvironmentResponse.getEnvironment().getEnvironmentId().getAccountId());
-    assertEquals(
-        cluster, createEnvironmentResponse.getEnvironment().getEnvironmentId().getCluster());
+    assertThat(createEnvironmentResponse.getEnvironment().getEnvironmentId().getEnvironmentName())
+        .isEqualTo(environmentName);
+    assertThat(createEnvironmentResponse.getEnvironment().getEnvironmentId().getAccountId())
+        .isEqualTo(accountId);
+    assertThat(createEnvironmentResponse.getEnvironment().getEnvironmentId().getCluster())
+        .isEqualTo(cluster);
   }
 }
