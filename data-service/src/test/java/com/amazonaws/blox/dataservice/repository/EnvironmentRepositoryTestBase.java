@@ -28,6 +28,7 @@ public abstract class EnvironmentRepositoryTestBase {
   EnvironmentRepositoryDDB repo;
   private DynamoDBMapper dbMapper;
   private EnvironmentMapper environmentMapper = Mappers.getMapper(EnvironmentMapper.class);
+  private DynamoDBLocalSetup dynamoDBLocalSetup = new DynamoDBLocalSetup();
 
   @Before
   public void createTables() {

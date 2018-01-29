@@ -16,6 +16,11 @@ package com.amazonaws.blox.dataservice.integration;
 
 import com.amazonaws.blox.dataservice.test.data.DynamoDBLocalSetup;
 import com.amazonaws.blox.dataservicemodel.v1.client.DataService;
+<<<<<<< HEAD
+=======
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+>>>>>>> Redo the spring wiring for integ test
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
