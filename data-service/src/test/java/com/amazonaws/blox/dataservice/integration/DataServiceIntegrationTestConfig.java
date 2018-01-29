@@ -29,5 +29,4 @@ public class DataServiceIntegrationTestConfig {
   public AmazonDynamoDB dynamoDBClient() {
     return DynamoDBEmbedded.create().amazonDynamoDB();
   }
-
 }
