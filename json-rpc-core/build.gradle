@@ -1,0 +1,18 @@
+plugins {
+    id "java"
+}
+
+group 'com.amazonaws.blox'
+version '0.1-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+dependencies {
+    compile "com.github.briandilley.jsonrpc4j:jsonrpc4j:+"
+    compile "org.projectlombok:lombok"
+
+    testCompile "org.slf4j:slf4j-simple"
+    testCompile "junit:junit:4.12"
+    testCompile "org.assertj:assertj-core:3.8+"
+    testCompileOnly "org.projectlombok:lombok"
+}

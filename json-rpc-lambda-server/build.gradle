@@ -8,6 +8,15 @@ version '0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
 dependencies {
-    compile "com.github.briandilley.jsonrpc4j:jsonrpc4j:+"
+    compile project(":json-rpc-core")
+
     compile 'com.amazonaws:aws-lambda-java-core:1.+'
+
+    testCompile "org.slf4j:slf4j-simple"
+    testCompile project(":json-rpc-lambda-client")
+    testCompile "junit:junit:4.12"
+    testCompile "org.mockito:mockito-core"
+    testCompile "org.assertj:assertj-core:3.8+"
+
+    testCompileOnly "org.projectlombok:lombok"
 }

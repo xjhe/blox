@@ -14,6 +14,8 @@
  */
 package com.amazonaws.blox.dataservicemodel.v1.exception;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 @Getter
@@ -22,7 +24,10 @@ public class ResourceNotFoundException extends ClientException {
   private String resourceType;
   private String resourceId;
 
-  public ResourceNotFoundException(String resourceType, String resourceId) {
+  @JsonCreator
+  public ResourceNotFoundException(
+      @JsonProperty("resourceType") String resourceType,
+      @JsonProperty("resourceId") String resourceId) {
     super(String.format("%s with id %s could not be found", resourceType, resourceId));
 
     this.resourceType = resourceType;
