@@ -18,11 +18,13 @@ import com.amazonaws.blox.dataservice.Application;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.local.embedded.DynamoDBEmbedded;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Import({Application.class})
 @Configuration
+@ComponentScan("com.amazonaws.blox.dataservice.test.data")
 public class DataServiceIntegrationTestConfig {
 
   @Bean

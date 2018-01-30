@@ -15,13 +15,12 @@
 package com.amazonaws.blox.dataservice.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.amazonaws.blox.dataservicemodel.v1.exception.ResourceExistsException;
 import com.amazonaws.blox.dataservicemodel.v1.model.EnvironmentId;
 import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.CreateEnvironmentResponse;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public class CreateEnvironmentIntegrationTest extends DataServiceIntegrationTestBase {
   private static final String ACCOUNT_ID = "123456789012";
@@ -45,8 +44,6 @@ public class CreateEnvironmentIntegrationTest extends DataServiceIntegrationTest
           .cluster(CLUSTER_TWO)
           .build();
 
-  @Rule public ExpectedException thrown = ExpectedException.none();
-
   @Test
   public void testCreateEnvironmentSuccessful() throws Exception {
     final CreateEnvironmentResponse createEnvironmentResponse =
@@ -69,16 +66,17 @@ public class CreateEnvironmentIntegrationTest extends DataServiceIntegrationTest
             .environmentId(createdEnvironmentId1)
             .build());
 
-    thrown.expect(ResourceExistsException.class);
-    thrown.expectMessage(
-        String.format("environment with id %s already exists", createdEnvironmentId1));
-
-    dataService.createEnvironment(
-        models
-            .createEnvironmentRequest()
-            .taskDefinition(TASK_DEFINITION)
-            .environmentId(createdEnvironmentId1)
-            .build());
+    assertThatThrownBy(
+            () ->
+                dataService.createEnvironment(
+                    models
+                        .createEnvironmentRequest()
+                        .taskDefinition(TASK_DEFINITION)
+                        .environmentId(createdEnvironmentId1)
+                        .build()))
+        .isInstanceOf(ResourceExistsException.class)
+        .hasMessageContaining(
+            String.format("environment with id %s already exists", createdEnvironmentId1));
   }
 
   @Test

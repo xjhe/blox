@@ -16,8 +16,6 @@ package com.amazonaws.blox.dataservice.integration;
 
 import com.amazonaws.blox.dataservice.test.data.DynamoDBLocalSetup;
 import com.amazonaws.blox.dataservicemodel.v1.client.DataService;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +27,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public abstract class DataServiceIntegrationTestBase {
-  @Autowired private AmazonDynamoDB amazonDynamoDB;
-  @Autowired private DynamoDBMapper dynamoDBMapper;
   @Autowired DataService dataService;
+  @Autowired DynamoDBLocalSetup dynamoDBLocalSetup;
 
   @Before
   public void setup() {
-    final DynamoDBLocalSetup dynamoDBLocalSetup = new DynamoDBLocalSetup();
-    dynamoDBLocalSetup.createTables(dynamoDBMapper, amazonDynamoDB);
+    dynamoDBLocalSetup.createTables();
   }
 }

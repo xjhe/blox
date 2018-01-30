@@ -20,11 +20,16 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 
+@Component
+@AllArgsConstructor
 public class DynamoDBLocalSetup {
+  private final DynamoDBMapper dynamoDBMapper;
+  private final AmazonDynamoDB amazonDynamoDB;
 
-  public void createTables(
-      final DynamoDBMapper dynamoDBMapper, final AmazonDynamoDB amazonDynamoDB) {
+  public void createTables() {
     ProvisionedThroughput throughput =
         new ProvisionedThroughput().withReadCapacityUnits(1000L).withWriteCapacityUnits(1000L);
     CreateTableRequest createEnvironments =
