@@ -65,6 +65,7 @@ public class CreateEnvironmentIntegrationTest extends DataServiceIntegrationTest
             .taskDefinition(TASK_DEFINITION)
             .environmentId(createdEnvironmentId1)
             .build());
+
     assertThatThrownBy(
             () ->
                 dataService.createEnvironment(
