@@ -22,44 +22,22 @@ import java.util.Arrays;
 import org.junit.Test;
 
 public class ListClustersIntegrationTest extends DataServiceIntegrationTestBase {
-  private static final String ACCOUNT_ID = "123456789012";
-  private static final String ENVIRONMENT_NAME = "environmentName";
   private static final String CLUSTER_ONE = "cluster1";
   private static final String CLUSTER_TWO = "cluster2";
-  private static final String TASK_DEFINITION = "taskDefinition";
   private static final DataServiceModelBuilder models = DataServiceModelBuilder.builder().build();
   private static final EnvironmentId createdEnvironmentId1 =
-      models
-          .environmentId()
-          .accountId(ACCOUNT_ID)
-          .environmentName(ENVIRONMENT_NAME)
-          .cluster(CLUSTER_ONE)
-          .build();
+      models.environmentId().cluster(CLUSTER_ONE).build();
   private static final EnvironmentId createdEnvironmentId2 =
-      models
-          .environmentId()
-          .accountId(ACCOUNT_ID)
-          .environmentName(ENVIRONMENT_NAME)
-          .cluster(CLUSTER_TWO)
-          .build();
+      models.environmentId().cluster(CLUSTER_TWO).build();
 
   @Test
   public void testListClusterWithTwoEnvironments() throws Exception {
     dataService.createEnvironment(
-        models
-            .createEnvironmentRequest()
-            .taskDefinition(TASK_DEFINITION)
-            .environmentId(createdEnvironmentId1)
-            .build());
+        models.createEnvironmentRequest().environmentId(createdEnvironmentId1).build());
     dataService.createEnvironment(
-        models
-            .createEnvironmentRequest()
-            .taskDefinition(TASK_DEFINITION)
-            .environmentId(createdEnvironmentId2)
-            .build());
+        models.createEnvironmentRequest().environmentId(createdEnvironmentId2).build());
     final ListClustersResponse listClustersResponse =
-        dataService.listClusters(
-            models.listClustersRequest().accountId(ACCOUNT_ID).clusterNamePrefix(null).build());
+        dataService.listClusters(models.listClustersRequest().clusterNamePrefix(null).build());
     assertThat(listClustersResponse.getClusters())
         .isEqualTo(
             Arrays.asList(

@@ -22,46 +22,25 @@ import java.util.Arrays;
 import org.junit.Test;
 
 public class ListEnvironmentsIntegrationTest extends DataServiceIntegrationTestBase {
-  private static final String ACCOUNT_ID = "123456789012";
   private static final String ENVIRONMENT_NAME_ONE = "environmentName1";
   private static final String ENVIRONMENT_NAME_TWO = "environmentName2";
-  private static final String CLUSTER = "cluster1";
-  private static final String TASK_DEFINITION = "taskDefinition";
   private static final DataServiceModelBuilder models = DataServiceModelBuilder.builder().build();
   private static final EnvironmentId createdEnvironmentId1 =
-      models
-          .environmentId()
-          .accountId(ACCOUNT_ID)
-          .environmentName(ENVIRONMENT_NAME_ONE)
-          .cluster(CLUSTER)
-          .build();
+      models.environmentId().environmentName(ENVIRONMENT_NAME_ONE).build();
   private static final EnvironmentId createdEnvironmentId3 =
-      models
-          .environmentId()
-          .accountId(ACCOUNT_ID)
-          .environmentName(ENVIRONMENT_NAME_TWO)
-          .cluster(CLUSTER)
-          .build();
+      models.environmentId().environmentName(ENVIRONMENT_NAME_TWO).build();
 
   @Test
   public void testListEnvironments() throws Exception {
     dataService.createEnvironment(
-        models
-            .createEnvironmentRequest()
-            .taskDefinition(TASK_DEFINITION)
-            .environmentId(createdEnvironmentId1)
-            .build());
+        models.createEnvironmentRequest().environmentId(createdEnvironmentId1).build());
     dataService.createEnvironment(
-        models
-            .createEnvironmentRequest()
-            .taskDefinition(TASK_DEFINITION)
-            .environmentId(createdEnvironmentId3)
-            .build());
+        models.createEnvironmentRequest().environmentId(createdEnvironmentId3).build());
     final ListEnvironmentsResponse listEnvironmentsResponse =
         dataService.listEnvironments(
             models
                 .listEnvironmentsRequest()
-                .cluster(models.cluster().clusterName(CLUSTER).build())
+                .cluster(models.cluster().build())
                 .environmentNamePrefix(null)
                 .build());
     assertThat(listEnvironmentsResponse.getEnvironmentIds())

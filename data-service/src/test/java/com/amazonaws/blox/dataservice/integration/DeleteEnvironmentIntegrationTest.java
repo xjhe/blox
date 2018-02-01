@@ -21,27 +21,13 @@ import com.amazonaws.blox.dataservicemodel.v1.model.wrappers.DeleteEnvironmentRe
 import org.junit.Test;
 
 public class DeleteEnvironmentIntegrationTest extends DataServiceIntegrationTestBase {
-  private static final String ACCOUNT_ID = "123456789012";
-  private static final String ENVIRONMENT_NAME = "environmentName";
-  private static final String CLUSTER = "cluster";
-  private static final String TASK_DEFINITION = "taskDefinition";
   private static final DataServiceModelBuilder models = DataServiceModelBuilder.builder().build();
-  private static final EnvironmentId createdEnvironmentId =
-      models
-          .environmentId()
-          .accountId(ACCOUNT_ID)
-          .environmentName(ENVIRONMENT_NAME)
-          .cluster(CLUSTER)
-          .build();
+  private static final EnvironmentId createdEnvironmentId = models.environmentId().build();
 
   @Test
   public void testDeleteEnvironment() throws Exception {
     dataService.createEnvironment(
-        models
-            .createEnvironmentRequest()
-            .taskDefinition(TASK_DEFINITION)
-            .environmentId(createdEnvironmentId)
-            .build());
+        models.createEnvironmentRequest().environmentId(createdEnvironmentId).build());
     final DeleteEnvironmentResponse deleteEnvironmentResponse =
         dataService.deleteEnvironment(
             models.deleteEnvironmentRequest().environmentId(createdEnvironmentId).build());
