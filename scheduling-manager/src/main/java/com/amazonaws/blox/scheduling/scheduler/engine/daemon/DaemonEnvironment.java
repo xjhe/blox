@@ -16,12 +16,14 @@ package com.amazonaws.blox.scheduling.scheduler.engine.daemon;
 
 import com.amazonaws.blox.scheduling.scheduler.engine.EnvironmentDescription;
 import com.amazonaws.blox.scheduling.scheduler.engine.StartTask;
+import com.amazonaws.blox.scheduling.scheduler.engine.StopTask;
 import com.amazonaws.blox.scheduling.state.ClusterSnapshot.ContainerInstance;
 import com.amazonaws.blox.scheduling.state.ClusterSnapshot.Task;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -39,6 +41,10 @@ public class DaemonEnvironment {
     return tasks.stream().noneMatch(this::matchesTask);
   }
 
+  public boolean hasUnmatchingTask(List<Task> tasks) {
+    return tasks.stream().anyMatch(this::unmatchesTask);
+  }
+
   public StartTask startTaskFor(ContainerInstance i) {
     return StartTask.builder()
         .clusterName(environment.getClusterName())
@@ -46,6 +52,30 @@ public class DaemonEnvironment {
         .taskDefinitionArn(environment.getTaskDefinitionArn())
         .group(environment.getEnvironmentName())
         .build();
+  }
+
+  public List<StopTask> stopTaskFor(final List<Task> tasks) {
+    final List<String> tasksToStop =
+        tasks
+            .stream()
+            .filter(this::unmatchesTask)
+            .map(Task::getTaskDefinitionArn)
+            .collect(Collectors.toList());
+    return tasksToStop
+        .stream()
+        .map(
+            t ->
+                StopTask.builder()
+                    .clusterName(environment.getClusterName())
+                    .task(t)
+                    .reason("replaceAfterTerminate")
+                    .build())
+        .collect(Collectors.toList());
+  }
+
+  public boolean unmatchesTask(Task t) {
+    return !t.getGroup().equals(environment.getEnvironmentName())
+        || !t.getTaskDefinitionArn().equals(environment.getTaskDefinitionArn());
   }
 
   public boolean matchesTask(Task t) {

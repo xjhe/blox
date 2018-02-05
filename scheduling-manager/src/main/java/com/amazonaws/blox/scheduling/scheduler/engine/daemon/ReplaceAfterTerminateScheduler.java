@@ -15,6 +15,7 @@
 package com.amazonaws.blox.scheduling.scheduler.engine.daemon;
 
 import com.amazonaws.blox.scheduling.scheduler.engine.SchedulingAction;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,11 +23,21 @@ public class ReplaceAfterTerminateScheduler extends DaemonScheduler {
   public static final String ID = "ReplaceAfterTerminate";
 
   public List<SchedulingAction> schedule(DaemonEnvironment env, ClusterSummary summary) {
-    return summary
+
+    List<SchedulingAction> stopTaskActions = new ArrayList<>();
+    summary
         .getInstances()
         .stream()
-        .filter(i -> env.hasMatchingTask(summary.tasksForInstance(i)))
-        .map(i -> env.startTaskFor(i))
-        .collect(Collectors.toList());
+        .filter(i -> env.hasUnmatchingTask(summary.tasksForInstance(i)))
+        .forEach(i -> stopTaskActions.addAll(env.stopTaskFor(summary.tasksForInstance(i))));
+
+    List<SchedulingAction> startTaskActions =
+        summary
+            .getInstances()
+            .stream()
+            .filter(i -> env.hasMatchingTask(summary.tasksForInstance(i)))
+            .map(i -> env.startTaskFor(i))
+            .collect(Collectors.toList());
+    return (stopTaskActions.size() == 0) ? startTaskActions : stopTaskActions;
   }
 }
