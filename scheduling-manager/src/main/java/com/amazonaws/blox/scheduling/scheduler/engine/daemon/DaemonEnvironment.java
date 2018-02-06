@@ -40,10 +40,6 @@ public class DaemonEnvironment {
     return tasks.stream().noneMatch(this::taskDesiredToRun);
   }
 
-  public boolean needsToStop(List<Task> tasks) {
-    return tasks.stream().anyMatch(this::taskToStop);
-  }
-
   public boolean noRunningTasks(List<Task> tasks) {
     return tasks.stream().noneMatch(t -> HEALTHY_STATES.contains(t.getStatus()));
   }

@@ -27,6 +27,8 @@ dependencies {
             'com.spotify:completable-futures:+',
             project(":data-service-model"),
             project(":json-rpc-lambda-client"),
+
+            "com.google.guava:guava:16+",
     )
 
     testCompile(

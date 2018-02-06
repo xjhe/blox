@@ -16,6 +16,7 @@ package com.amazonaws.blox.scheduling.scheduler.engine.daemon;
 
 import com.amazonaws.blox.scheduling.scheduler.engine.SchedulingAction;
 import com.amazonaws.blox.scheduling.state.ClusterSnapshot;
+import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,12 +28,11 @@ public class ReplaceAfterTerminateScheduler extends DaemonScheduler {
         summary
             .getInstances()
             .stream()
-            .filter(i -> env.needsToStop(summary.tasksForInstance(i)))
-            .flatMap(i -> summary.tasksForInstance(i).stream().filter(t -> env.taskToStop(t)))
+            .flatMap(i -> summary.tasksForInstance(i).stream().filter(env::taskToStop))
             .collect(Collectors.toList());
 
     List<SchedulingAction> stopTaskActions =
-        tasksToStop.stream().map(t -> env.stopTaskFor(t)).collect(Collectors.toList());
+        tasksToStop.stream().map(env::stopTaskFor).collect(Collectors.toList());
 
     List<SchedulingAction> startTaskActions =
         summary
@@ -40,10 +40,12 @@ public class ReplaceAfterTerminateScheduler extends DaemonScheduler {
             .stream()
             .filter(i -> env.needsToAssign(summary.tasksForInstance(i)))
             .filter(i -> env.noRunningTasks(summary.tasksForInstance(i)))
-            .map(i -> env.startTaskFor(i))
+            .map(env::startTaskFor)
             .collect(Collectors.toList());
 
-    startTaskActions.addAll(stopTaskActions);
-    return startTaskActions;
+    return new ImmutableList.Builder<SchedulingAction>()
+        .addAll(startTaskActions)
+        .addAll(stopTaskActions)
+        .build();
   }
 }
