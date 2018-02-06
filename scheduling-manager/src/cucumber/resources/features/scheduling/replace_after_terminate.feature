@@ -43,9 +43,23 @@ Feature: Deploying a Daemon environment to a cluster with Replace After Terminat
       | instance | tasks          |
       | i-1      | t-1:v1:RUNNING |
       | i-2      | t-2:v2:RUNNING |
-      | i-3      |                |
     When the scheduler runs
     Then it should stop the following tasks:
       | clusterName | task           | reason                |
-      | TestCluster | v2             | replaceAfterTerminate |
+      | TestCluster | v2             | Stopped by deployment to DaemonEnvironment@v1 |
+    And it should not take any further actions
+
+  Scenario: Scheduling on a cluster with multiple actions
+    Given the cluster has the following instances and tasks:
+      | instance | tasks          |
+      | i-1      | t-1:v1:RUNNING |
+      | i-2      | t-2:v2:RUNNING |
+      | i-3      |                |
+    When the scheduler runs
+    Then it should start the following tasks:
+      | containerInstanceArn | taskDefinitionArn | group             |
+      | i-3                  | v1                | DaemonEnvironment |
+    Then it should stop the following tasks:
+      | clusterName | task           | reason                |
+      | TestCluster | v2             | Stopped by deployment to DaemonEnvironment@v1 |
     And it should not take any further actions

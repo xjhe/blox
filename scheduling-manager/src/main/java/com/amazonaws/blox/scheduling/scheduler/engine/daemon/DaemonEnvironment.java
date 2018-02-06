@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -37,12 +36,16 @@ public class DaemonEnvironment {
 
   private final EnvironmentDescription environment;
 
-  public boolean hasMatchingTask(List<Task> tasks) {
-    return tasks.stream().noneMatch(this::matchesTask);
+  public boolean needsToAssign(List<Task> tasks) {
+    return tasks.stream().noneMatch(this::taskDesiredToRun);
   }
 
-  public boolean hasUnmatchingTask(List<Task> tasks) {
-    return tasks.stream().anyMatch(this::unmatchesTask);
+  public boolean needsToStop(List<Task> tasks) {
+    return tasks.stream().anyMatch(this::taskToStop);
+  }
+
+  public boolean noRunningTasks(List<Task> tasks) {
+    return tasks.stream().noneMatch(t -> HEALTHY_STATES.contains(t.getStatus()));
   }
 
   public StartTask startTaskFor(ContainerInstance i) {
@@ -54,31 +57,24 @@ public class DaemonEnvironment {
         .build();
   }
 
-  public List<StopTask> stopTaskFor(final List<Task> tasks) {
-    final List<String> tasksToStop =
-        tasks
-            .stream()
-            .filter(this::unmatchesTask)
-            .map(Task::getTaskDefinitionArn)
-            .collect(Collectors.toList());
-    return tasksToStop
-        .stream()
-        .map(
-            t ->
-                StopTask.builder()
-                    .clusterName(environment.getClusterName())
-                    .task(t)
-                    .reason("replaceAfterTerminate")
-                    .build())
-        .collect(Collectors.toList());
+  public StopTask stopTaskFor(final Task task) {
+    return StopTask.builder()
+        .clusterName(environment.getClusterName())
+        .task(task.getTaskDefinitionArn())
+        .reason(
+            String.format(
+                "Stopped by deployment to %s@%s",
+                environment.getEnvironmentName(), environment.getTaskDefinitionArn()))
+        .build();
   }
 
-  public boolean unmatchesTask(Task t) {
-    return !t.getGroup().equals(environment.getEnvironmentName())
-        || !t.getTaskDefinitionArn().equals(environment.getTaskDefinitionArn());
+  public boolean taskToStop(Task t) {
+    return t.getGroup().equals(environment.getEnvironmentName())
+        && !t.getTaskDefinitionArn().equals(environment.getTaskDefinitionArn())
+        && HEALTHY_STATES.contains(t.getStatus());
   }
 
-  public boolean matchesTask(Task t) {
+  public boolean taskDesiredToRun(Task t) {
     return t.getGroup().equals(environment.getEnvironmentName())
         && t.getTaskDefinitionArn().equals(environment.getTaskDefinitionArn())
         && HEALTHY_STATES.contains(t.getStatus());
