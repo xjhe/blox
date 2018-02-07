@@ -581,7 +581,37 @@ SomeEnvironment/Prod:1    Undeploying  3         4
 SomeEnvironment/Prod:2    Deploying    5         2
 ```
 
-Appendix B: Alternatives considered
+Appendix B: State transition for the TerminateThenReplace scheduler
+----------------------------------- 
+This section describes the state transition for a scheduler with TerminateThenReplace deployment configuration.
+
+Consider an environment with the following configuration: 
+```
+Environment name: env1
+Task definition arn: v2
+
+```
+While `v2` is the current version, assume that the previous version is `v1`. The environment changes its version from `v1` to `v2` through an update. We consider the state diagram at the steady state of environment version `v2`.
+
+Each state is described using `EnvironmentName:Version:TaskStatus`.
+
+![State diagram for the TerminateThenReplace scheduler](diagrams/terminateThenReplaceSchedulerStateTransition.png) 
+
+The states and actions of each transition step on an environment update can be described in the following table. Just consider one instance `i1`. 
+
+| T | Event                                    | i<sub>1</sub>                                            | action          |
+|:--|:-----------------------------------------|:---------------------------------------------------------|:----------------|
+| 0 | Create Environment(v1)                   |                                                          | start task      |
+| 1 | task t1:v1 running                       | :white_check_mark:<sub>v1</sub>                          | no action       |
+| 2 | Update Environment(v2)                   | :white_check_mark:<sub>v1</sub>                          | stop task       |
+| 3 | task t1:v1 terminating                   | :red_circle:<sub>v1</sub>                                | no action       |
+| 4 | task t1:v1 terminated                    | :no_entry:<sub>v1</sub>                                  | start task      |
+| 5 | task t2:v2 running                       | :white_check_mark:<sub>v2</sub>                          | no action       |
+| 6 | task t2:v2 terminating                   | :red_circle:<sub>v2</sub>                                | start task      |
+| 7 | task t2:v2 terminated, task t3:v2 starts | :no_entry:<sub>v2</sub>  :white_check_mark:<sub>v2</sub> | no action       |
+| 8 | task t3:v2 running                       | :white_check_mark:<sub>v2</sub>                          | no action       |                                                                                             
+                                                                                              
+Appendix C: Alternatives considered
 -----------------------------------
 This section documents alternative paths we considered, but discarded, and why.
 
