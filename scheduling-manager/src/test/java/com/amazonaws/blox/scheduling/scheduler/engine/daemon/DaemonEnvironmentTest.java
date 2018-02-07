@@ -52,30 +52,30 @@ public class DaemonEnvironmentTest {
   @Test
   public void matchesHealthyTasksWithSameTaskDefinition() {
     boolean matches =
-        environment.taskDesiredToRun(
+        environment.isTaskRunnable(
             defaultTask().taskDefinitionArn(env.getTaskDefinitionArn()).status("RUNNING").build());
 
     assertThat(matches).isTrue();
   }
 
   @Test
-  public void doesntMatchTaskWithDifferentTaskDefinition() {
+  public void matchesTaskWithDifferentTaskDefinition() {
     boolean matches =
-        environment.taskDesiredToRun(defaultTask().taskDefinitionArn("different-taskdef").build());
+        environment.isTaskRunnable(defaultTask().taskDefinitionArn("different-taskdef").build());
 
-    assertThat(matches).isFalse();
+    assertThat(matches).isTrue();
   }
 
   @Test
   public void doesntMatchTaskWithDifferentGroup() {
-    boolean matches = environment.taskDesiredToRun(defaultTask().group("different-group").build());
+    boolean matches = environment.isTaskRunnable(defaultTask().group("different-group").build());
 
     assertThat(matches).isFalse();
   }
 
   @Test
   public void doesntMatchUnhealthyTask() {
-    boolean matches = environment.taskDesiredToRun(defaultTask().status("STOPPED").build());
+    boolean matches = environment.isTaskRunnable(defaultTask().status("STOPPED").build());
 
     assertThat(matches).isFalse();
   }
@@ -98,14 +98,14 @@ public class DaemonEnvironmentTest {
   @Test
   public void hasTaskToStop() {
     boolean stop =
-        environment.taskToStop(defaultTask().taskDefinitionArn("different-taskdef").build());
+        environment.isTaskStoppable(defaultTask().taskDefinitionArn("different-taskdef").build());
 
     assertThat(stop).isTrue();
   }
 
   @Test
   public void noTasksToStopForDesiredTasks() {
-    boolean stop = environment.taskToStop(defaultTask().build());
+    boolean stop = environment.isTaskStoppable(defaultTask().build());
 
     assertThat(stop).isFalse();
   }
@@ -113,7 +113,7 @@ public class DaemonEnvironmentTest {
   @Test
   public void noTasksToStopForAlreadyStoppedTasks() {
     boolean stop =
-        environment.taskToStop(
+        environment.isTaskStoppable(
             defaultTask().taskDefinitionArn("different-taskdef").status("STOPPED").build());
 
     assertThat(stop).isFalse();
@@ -122,37 +122,46 @@ public class DaemonEnvironmentTest {
   @Test
   public void noTasksToStopForAnotherEnvironment() {
     boolean stop =
-        environment.taskToStop(
+        environment.isTaskStoppable(
             defaultTask().taskDefinitionArn("different-taskdef").group("different-group").build());
 
     assertThat(stop).isFalse();
   }
 
   @Test
-  public void noRunningTasks() {
-    boolean noRunningTasks =
-        environment.noRunningTasks(
+  public void noHealthyTasks() {
+    boolean isMissingHealthyTask =
+        environment.isMissingHealthyTask(
             Collections.singletonList(defaultTask().status("STOPPED").build()));
 
-    assertThat(noRunningTasks).isTrue();
+    assertThat(isMissingHealthyTask).isTrue();
   }
 
   @Test
-  public void hasRunningTasks() {
-    boolean noRunningTasks =
-        environment.noRunningTasks(Collections.singletonList(defaultTask().build()));
+  public void hasHealthyTasks() {
+    boolean isMissingHealthyTask =
+        environment.isMissingHealthyTask(Collections.singletonList(defaultTask().build()));
 
-    assertThat(noRunningTasks).isFalse();
+    assertThat(isMissingHealthyTask).isFalse();
   }
 
   @Test
-  public void hasRunningTasksWithAnotherVersion() {
-    boolean noRunningTasks =
-        environment.noRunningTasks(
+  public void hasHealthyTasksWithAnotherVersion() {
+    boolean isMissingHealthyTask =
+        environment.isMissingHealthyTask(
             Collections.singletonList(
                 defaultTask().taskDefinitionArn("different-taskdef").build()));
 
-    assertThat(noRunningTasks).isFalse();
+    assertThat(isMissingHealthyTask).isFalse();
+  }
+
+  @Test
+  public void hasHealthyTasksOnAnotherEnvironment() {
+    boolean isMissingHealthyTask =
+        environment.isMissingHealthyTask(
+            Collections.singletonList(defaultTask().group("different-environment").build()));
+
+    assertThat(isMissingHealthyTask).isTrue();
   }
 
   @Test

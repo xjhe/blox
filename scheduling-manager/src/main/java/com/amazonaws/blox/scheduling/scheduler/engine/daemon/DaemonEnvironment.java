@@ -36,12 +36,8 @@ public class DaemonEnvironment {
 
   private final EnvironmentDescription environment;
 
-  public boolean needsToAssign(List<Task> tasks) {
-    return tasks.stream().noneMatch(this::taskDesiredToRun);
-  }
-
-  public boolean noRunningTasks(List<Task> tasks) {
-    return tasks.stream().noneMatch(t -> HEALTHY_STATES.contains(t.getStatus()));
+  public boolean isMissingHealthyTask(List<Task> tasks) {
+    return tasks.stream().noneMatch(this::isTaskRunnable);
   }
 
   public StartTask startTaskFor(ContainerInstance i) {
@@ -64,15 +60,14 @@ public class DaemonEnvironment {
         .build();
   }
 
-  public boolean taskToStop(Task t) {
+  public boolean isTaskStoppable(Task t) {
     return t.getGroup().equals(environment.getEnvironmentName())
         && !t.getTaskDefinitionArn().equals(environment.getTaskDefinitionArn())
         && HEALTHY_STATES.contains(t.getStatus());
   }
 
-  public boolean taskDesiredToRun(Task t) {
+  public boolean isTaskRunnable(Task t) {
     return t.getGroup().equals(environment.getEnvironmentName())
-        && t.getTaskDefinitionArn().equals(environment.getTaskDefinitionArn())
         && HEALTHY_STATES.contains(t.getStatus());
   }
 }
