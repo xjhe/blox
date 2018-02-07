@@ -37,7 +37,7 @@ public class DaemonEnvironment {
   private final EnvironmentDescription environment;
 
   public boolean isMissingHealthyTask(List<Task> tasks) {
-    return tasks.stream().noneMatch(this::isTaskRunnable);
+    return tasks.stream().noneMatch(this::isMatchingTask);
   }
 
   public StartTask startTaskFor(ContainerInstance i) {
@@ -66,7 +66,7 @@ public class DaemonEnvironment {
         && HEALTHY_STATES.contains(t.getStatus());
   }
 
-  public boolean isTaskRunnable(Task t) {
+  public boolean isMatchingTask(Task t) {
     return t.getGroup().equals(environment.getEnvironmentName())
         && HEALTHY_STATES.contains(t.getStatus());
   }

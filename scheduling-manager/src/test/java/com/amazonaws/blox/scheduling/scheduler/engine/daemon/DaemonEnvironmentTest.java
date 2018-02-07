@@ -52,7 +52,7 @@ public class DaemonEnvironmentTest {
   @Test
   public void matchesHealthyTasksWithSameTaskDefinition() {
     boolean matches =
-        environment.isTaskRunnable(
+        environment.isMatchingTask(
             defaultTask().taskDefinitionArn(env.getTaskDefinitionArn()).status("RUNNING").build());
 
     assertThat(matches).isTrue();
@@ -61,21 +61,21 @@ public class DaemonEnvironmentTest {
   @Test
   public void matchesTaskWithDifferentTaskDefinition() {
     boolean matches =
-        environment.isTaskRunnable(defaultTask().taskDefinitionArn("different-taskdef").build());
+        environment.isMatchingTask(defaultTask().taskDefinitionArn("different-taskdef").build());
 
     assertThat(matches).isTrue();
   }
 
   @Test
   public void doesntMatchTaskWithDifferentGroup() {
-    boolean matches = environment.isTaskRunnable(defaultTask().group("different-group").build());
+    boolean matches = environment.isMatchingTask(defaultTask().group("different-group").build());
 
     assertThat(matches).isFalse();
   }
 
   @Test
   public void doesntMatchUnhealthyTask() {
-    boolean matches = environment.isTaskRunnable(defaultTask().status("STOPPED").build());
+    boolean matches = environment.isMatchingTask(defaultTask().status("STOPPED").build());
 
     assertThat(matches).isFalse();
   }
