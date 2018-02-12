@@ -597,19 +597,25 @@ Each state is described using `EnvironmentName:Version:TaskStatus`.
 
 ![State diagram for the TerminateThenReplace scheduler](diagrams/terminateThenReplaceSchedulerStateTransition.png) 
 
+While "Active", "Empty", and "Failing" describe the current state in which the task version is the same as the environment version, "OutdatedRunning" and "OutdatedStopped" are states in which task version is different from the environment version. 
+
 The states and actions of each transition step on an environment update can be described in the following table. Just consider one instance `i1`. 
 
-| T | Event                                    | i<sub>1</sub>                                            | action          |
-|:--|:-----------------------------------------|:---------------------------------------------------------|:----------------|
-| 0 | Create Environment(v1)                   |                                                          | start task      |
-| 1 | task t1:v1 running                       | :white_check_mark:<sub>v1</sub>                          | no action       |
-| 2 | Update Environment(v2)                   | :white_check_mark:<sub>v1</sub>                          | stop task       |
-| 3 | task t1:v1 terminating                   | :red_circle:<sub>v1</sub>                                | no action       |
-| 4 | task t1:v1 terminated                    | :no_entry:<sub>v1</sub>                                  | start task      |
-| 5 | task t2:v2 running                       | :white_check_mark:<sub>v2</sub>                          | no action       |
-| 6 | task t2:v2 terminating                   | :red_circle:<sub>v2</sub>                                | start task      |
-| 7 | task t2:v2 terminated, task t3:v2 starts | :no_entry:<sub>v2</sub>  :white_check_mark:<sub>v2</sub> | no action       |
-| 8 | task t3:v2 running                       | :white_check_mark:<sub>v2</sub>                          | no action       |                                                                                             
+We consider the sequential events of creating an environment, updating an environment, and terminating a task abnormally. 
+
+| T | Event                                    | i<sub>1</sub>                                             | action          |
+|:--|:-----------------------------------------|:----------------------------------------------------------|:----------------|
+| 0 | Create Environment(v1)                   |                                                           | start task      |
+| 1 | task t1:v1 pending                       | :large_blue_circle:<sub>v1</sub>                          | no action       |
+| 2 | task t1:v1 running                       | :white_check_mark:<sub>v1</sub>                           | no action       |
+| 3 | Update Environment(v2)                   | :white_check_mark:<sub>v1</sub>                           | stop task       |
+| 4 | task t1:v1 terminating                   | :red_circle:<sub>v1</sub>                                 | no action       |
+| 5 | task t1:v1 terminated                    | :no_entry:<sub>v1</sub>                                   | start task      |
+| 6 | task t2:v2 pending                       | :large_blue_circle:<sub>v1</sub>                          | no action       |
+| 7 | task t2:v2 running                       | :white_check_mark:<sub>v2</sub>                           | no action       |
+| 8 | task t2:v2 terminated abnormally         | :no_entry:<sub>v2</sub>                                   | start task      |
+| 9 | task t3:v2 pending                       | :large_blue_circle:<sub>v2</sub>                          | no action       |
+| 10| task t3:v2 running                       | :white_check_mark:<sub>v2</sub>                           | no action       |                                                                                             
                                                                                               
 Appendix C: Alternatives considered
 -----------------------------------
